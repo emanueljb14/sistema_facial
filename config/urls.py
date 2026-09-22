@@ -4,6 +4,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+# ============================================================
+# RUTAS PRINCIPALES
+# ============================================================
+
 urlpatterns = [
 
     # ========================================================
@@ -12,27 +16,23 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
-
     # ========================================================
     # DASHBOARD
     # ========================================================
 
     path('', include('dashboard.urls')),
 
-
     # ========================================================
-    # USUARIOS
+    # USUARIOS Y AUTENTICACIÓN
     # ========================================================
 
     path('usuarios/', include('usuarios.urls')),
-
 
     # ========================================================
     # RECONOCIMIENTO FACIAL
     # ========================================================
 
     path('reconocimiento/', include('reconocimiento.urls')),
-
 
     # ========================================================
     # ASISTENCIAS
