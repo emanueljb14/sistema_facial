@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Reportes | SecureFace
+{% endblock %}
+
+{% block reportes_active %}
+active
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Estilos de la Cabecera */
+    .page-header {
+        margin-bottom: 24px;
+    }
+    .page-header h1 {
+        font-size: 1.75rem;
+        margin: 0 0 5px 0;
+        color: #0f2b4d;
+    }
+    .page-header p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    /* Tarjetas de Reportes Principales */
+    .report-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+    .report-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 30px 24px;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .report-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+    .report-card > i {
+        font-size: 2.5rem;
+        color: #0f2b4d;
+        margin-bottom: 16px;
+    }
+    .report-card h3 {
+        font-size: 1.2rem;
+        margin: 0 0 10px 0;
+        color: #212529;
+        font-weight: 700;
+    }
+    .report-card p {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        flex-grow: 1; /* Empuja el botón hacia abajo si los textos varían en tamaño */
+    }
+
+    /* Botones */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background-color: #0f2b4d;
+        color: #ffffff;
+        padding: 10px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .btn-primary:hover {
+        background-color: #0a1c33;
+        color: #ffffff;
+    }
+
+    /* Contenedor del Panel Inferior */
+    .panel {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eaeaea;
+        overflow: hidden;
+    }
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 24px;
+        border-bottom: 1px solid #eaeaea;
+    }
+    .panel-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #212529;
+        font-weight: 600;
+    }
+    .panel-header span {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    /* Cuadrícula de Estadísticas (Resumen General) */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 24px;
+    }
+    .stat-card.simple {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 24px 16px;
+        text-align: center;
+        border: 1px solid #eaeaea;
+    }
+    .stat-card.simple h3 {
+        font-size: 2rem;
+        margin: 0 0 8px 0;
+        color: #0f2b4d;
+        font-weight: 700;
+    }
+    .stat-card.simple p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <h1>Reportes</h1>
+        <p>Consulta y genera información del sistema.</p>
+    </div>
+</div>
+
+<!-- TARJETAS DE REPORTES -->
+<div class="report-cards">
+    <div class="report-card">
+        <i class="bi bi-calendar-week"></i>
+        <h3>Reporte semanal</h3>
+        <p>Consulta las asistencias registradas durante la semana.</p>
+        <a href="/ruta-reporte-semanal" class="btn-primary">
+            <i class="bi bi-file-earmark-pdf"></i> Generar
+        </a>
+    </div>
+
+    <div class="report-card">
+        <i class="bi bi-calendar-month"></i>
+        <h3>Reporte mensual</h3>
+        <p>Obtén un resumen mensual de asistencias y ausencias.</p>
+        <a href="/ruta-reporte-mensual" class="btn-primary">
+            <i class="bi bi-file-earmark-pdf"></i> Generar
+        </a>
+    </div>
+
+    <div class="report-card">
+        <i class="bi bi-person-lines-fill"></i>
+        <h3>Reporte de usuarios</h3>
+        <p>Consulta información general de los usuarios registrados.</p>
+        <a href="/ruta-reporte-usuarios" class="btn-primary">
+            <i class="bi bi-file-earmark-pdf"></i> Generar
+        </a>
+    </div>
+</div>
+
+<!-- RESUMEN GENERAL -->
+<div class="panel">
+    <div class="panel-header">
+        <h3>Resumen general</h3>
+        <span>Septiembre 2026</span>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card simple">
+            <h3>2,430</h3>
+            <p>Reconocimientos</p>
+        </div>
+
+        <div class="stat-card simple">
+            <h3>1,982</h3>
+            <p>Asistencias</p>
+        </div>
+
+        <div class="stat-card simple">
+            <h3>312</h3>
+            <p>Ausencias</p>
+        </div>
+
+        <div class="stat-card simple">
+            <h3>136</h3>
+            <p>Tardanzas</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

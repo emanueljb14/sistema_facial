@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,28 +8,23 @@ from .forms import LoginForm, RegistroTrabajadorForm
 from .models import Trabajador
 
 
+@login_required
 def lista_trabajadores(request):
-    trabajadores = Trabajador.objects.all()
+    trabajadores = Trabajador.objects.all().order_by('-fecha_registro')
 
     return render(
         request,
         'usuarios/lista.html',
-        {
-            'trabajadores': trabajadores
-        }
+        {'trabajadores': trabajadores}
     )
 
 
+@login_required
 def registro(request):
-
-    if request.user.is_authenticated:
-        return redirect('lista_trabajadores')
-
     if request.method == 'POST':
         form = RegistroTrabajadorForm(request.POST)
 
         if form.is_valid():
-
             trabajador = form.save(commit=False)
 
             username = form.cleaned_data['username']
@@ -53,7 +47,7 @@ def registro(request):
                 'Trabajador registrado correctamente.'
             )
 
-            return redirect('login')
+            return redirect('lista_trabajadores')
 
     else:
         form = RegistroTrabajadorForm()
@@ -61,19 +55,21 @@ def registro(request):
     return render(
         request,
         'usuarios/registro.html',
-        {
-            'form': form
-        }
+        {'form': form}
     )
 
 
 def iniciar_sesion(request):
 
     if request.user.is_authenticated:
-        return redirect('lista_trabajadores')
+        return redirect('dashboard')
 
     if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
+
+        form = LoginForm(
+            request,
+            data=request.POST
+        )
 
         if form.is_valid():
 
@@ -96,7 +92,6 @@ def iniciar_sesion(request):
                             request,
                             'Este usuario se encuentra inactivo.'
                         )
-
                         return redirect('login')
 
                 except Trabajador.DoesNotExist:
@@ -104,12 +99,14 @@ def iniciar_sesion(request):
 
                 login(request, usuario)
 
-                messages.success(
-                    request,
-                    'Inicio de sesión correcto.'
-                )
+                return redirect('dashboard')
 
-                return redirect('lista_trabajadores')
+        else:
+
+            messages.error(
+                request,
+                'Usuario o contraseña incorrectos.'
+            )
 
     else:
         form = LoginForm()
@@ -117,9 +114,7 @@ def iniciar_sesion(request):
     return render(
         request,
         'usuarios/login.html',
-        {
-            'form': form
-        }
+        {'form': form}
     )
 
 
@@ -149,7 +144,5 @@ def perfil(request):
     return render(
         request,
         'usuarios/perfil.html',
-        {
-            'trabajador': trabajador
-        }
+        {'trabajador': trabajador}
     )

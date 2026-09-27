@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Usuarios | SecureFace
+{% endblock %}
+
+{% block usuarios_active %}
+active
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Estilos estructurales para esta vista */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    .page-header h1 {
+        font-size: 1.75rem;
+        margin: 0 0 5px 0;
+        color: #0f2b4d;
+    }
+    .page-header p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    /* Botón convertido en enlace para evitar conflictos */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #0f2b4d; /* Azul corporativo */
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease;
+    }
+    .btn-primary:hover {
+        background-color: #0a1c33;
+        color: #ffffff;
+    }
+
+    /* Contenedor principal de la tabla */
+    .panel {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eaeaea;
+        overflow: hidden;
+    }
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 24px;
+        border-bottom: 1px solid #eaeaea;
+    }
+    .panel-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #212529;
+        font-weight: 600;
+    }
+    .panel-header span {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    /* Tabla */
+    .table-container {
+        overflow-x: auto;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+    .data-table th {
+        padding: 14px 24px;
+        background-color: #f8f9fa;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #495057;
+        text-transform: uppercase;
+        border-bottom: 2px solid #eaeaea;
+    }
+    .data-table td {
+        padding: 16px 24px;
+        font-size: 0.95rem;
+        color: #3e444a;
+        border-bottom: 1px solid #eaeaea;
+        vertical-align: middle;
+    }
+    .data-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .data-table td strong {
+        color: #212529;
+        font-weight: 600;
+    }
+
+    /* Etiquetas de estado */
+    .status {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .status.success {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+    .status.warning {
+        background-color: #fff8e1;
+        color: #f57f17;
+    }
+    
+    /* Icono de acción */
+    .bi-three-dots {
+        cursor: pointer;
+        color: #6c757d;
+        font-size: 1.2rem;
+    }
+    .bi-three-dots:hover {
+        color: #212529;
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <h1>Usuarios</h1>
+        <p>Administra las personas registradas en el sistema.</p>
+    </div>
+    
+    <!-- Botón corregido con la ruta de Django -->
+    <a href="{% url 'agregar_usuario' %}" class="btn-primary">
+        <i class="bi bi-person-plus-fill"></i>
+        Nuevo usuario
+    </a>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h3>Usuarios registrados</h3>
+        <span>128 usuarios</span>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>USUARIO</th>
+                    <th>DOCUMENTO</th>
+                    <th>CARGO</th>
+                    <th>ESTADO</th>
+                    <th>ACCIÓN</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Juan Pérez</strong></td>
+                    <td>72845691</td>
+                    <td>Administrador</td>
+                    <td><span class="status success">Activo</span></td>
+                    <td><i class="bi bi-three-dots"></i></td>
+                </tr>
+                <tr>
+                    <td><strong>María López</strong></td>
+                    <td>74562138</td>
+                    <td>Empleado</td>
+                    <td><span class="status success">Activo</span></td>
+                    <td><i class="bi bi-three-dots"></i></td>
+                </tr>
+                <tr>
+                    <td><strong>Carlos Pérez</strong></td>
+                    <td>71234856</td>
+                    <td>Supervisor</td>
+                    <td><span class="status warning">Pendiente</span></td>
+                    <td><i class="bi bi-three-dots"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

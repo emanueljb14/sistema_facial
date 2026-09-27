@@ -1,4 +1,3 @@
-
 from django.urls import path
 
 from . import views
@@ -6,39 +5,34 @@ from . import views
 
 urlpatterns = [
 
-    # Lista de trabajadores
     path(
         '',
         views.lista_trabajadores,
         name='lista_trabajadores'
     ),
 
-    # Registro
     path(
-        'registro/',
+        'agregar/',
         views.registro,
-        name='registro'
+        name='agregar_usuario'
     ),
 
-    # Login
     path(
         'login/',
         views.iniciar_sesion,
         name='login'
     ),
 
-    # Logout
     path(
         'logout/',
         views.cerrar_sesion,
         name='logout'
     ),
 
-    # Perfil
     path(
         'perfil/',
         views.perfil,
         name='perfil'
     ),
-]
 
+]

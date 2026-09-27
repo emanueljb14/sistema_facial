@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Gestión de usuarios
+        </h1>
+
+        <p>
+            Administra los trabajadores registrados en SecureFace.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'agregar_usuario' %}"
+        class="btn btn-primary"
+    >
+
+        <i class="bi bi-person-plus"></i>
+
+        Nuevo usuario
+
+    </a>
+
+</div>
+
+
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h3>
+
+                <i class="bi bi-people"></i>
+
+                Usuarios registrados
+
+            </h3>
+
+            <p>
+                Lista de trabajadores del sistema
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="table-responsive">
+
+        <table class="table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        DNI
+                    </th>
+
+                    <th>
+                        Trabajador
+                    </th>
+
+                    <th>
+                        Correo
+                    </th>
+
+                    <th>
+                        Cargo
+                    </th>
+
+                    <th>
+                        Área
+                    </th>
+
+                    <th>
+                        Rol
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                {% for trabajador in trabajadores %}
+
+                <tr>
+
+                    <td>
+
+                        <strong>
+                            {{ trabajador.dni }}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        <div>
+
+                            <strong>
+
+                                {{ trabajador.nombres }}
+
+                                {{ trabajador.apellidos }}
+
+                            </strong>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ trabajador.correo }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ trabajador.cargo }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ trabajador.area }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if trabajador.rol == 'ADMIN' %}
+
+                            <span class="badge bg-primary">
+
+                                Administrador
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+
+                                Empleado
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if trabajador.activo %}
+
+                            <span class="badge bg-success">
+
+                                Activo
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+
+                                Inactivo
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center"
+                    >
+
+                        <div style="padding: 50px;">
+
+                            <i
+                                class="bi bi-people"
+                                style="
+                                    font-size: 50px;
+                                    color: #999;
+                                "
+                            ></i>
+
+
+                            <h3>
+
+                                No hay usuarios registrados
+
+                            </h3>
+
+
+                            <p>
+
+                                Comienza registrando
+                                el primer trabajador.
+
+                            </p>
+
+
+                            <a
+                                href="{% url 'agregar_usuario' %}"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="bi bi-person-plus"></i>
+
+                                Agregar usuario
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

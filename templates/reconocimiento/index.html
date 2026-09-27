@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Reconocimiento facial | SecureFace
+{% endblock %}
+
+{% block reconocimiento_active %}
+active
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Estilos específicos para el módulo de reconocimiento */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+
+    @media (max-width: 992px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .camera-box {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        background-color: #1a202c;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .camera-box video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .camera-placeholder {
+        position: absolute;
+        text-align: center;
+        color: #a0aec0;
+        z-index: 2;
+    }
+
+    .camera-placeholder i {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    .camera-placeholder h2 {
+        font-size: 1.25rem;
+        color: #e2e8f0;
+        margin: 0 0 5px 0;
+    }
+
+    .camera-placeholder p {
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    .controls-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn-danger-custom {
+        background-color: #e53e3e;
+        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-danger-custom:hover {
+        background-color: #c53030;
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <h1>Reconocimiento facial</h1>
+        <p>Identificación automática mediante inteligencia artificial.</p>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- CÁMARA -->
+    <div class="panel">
+        <div class="panel-header">
+            <h3>Cámara de reconocimiento</h3>
+            <span id="aiStatus" style="color: #718096; font-weight: 600; font-size: 0.8rem;">INACTIVA</span>
+        </div>
+
+        <div class="camera-box">
+            <video id="camera" autoplay muted playsinline></video>
+            <div id="cameraPlaceholder" class="camera-placeholder">
+                <i class="bi bi-camera-video-off"></i>
+                <h2>Cámara desactivada</h2>
+                <p>Activa la cámara para comenzar el escaneo.</p>
+            </div>
+        </div>
+
+        <div class="controls-container">
+            <button class="btn-primary" onclick="activarCamara()">
+                <i class="bi bi-camera-fill"></i> Activar cámara
+            </button>
+            <button class="btn-danger-custom" onclick="apagarCamara()" id="btnApagar" style="display: none;">
+                <i class="bi bi-stop-circle-fill"></i> Apagar cámara
+            </button>
+        </div>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="panel">
+        <div class="panel-header">
+            <h3>Resultado</h3>
+        </div>
+
+        <div style="text-align: center; padding: 50px 10px;">
+            <div class="stat-icon" style="width: 80px; height: 80px; margin: auto; font-size: 35px; display: flex; align-items: center; justify-content: center; background-color: #f7fafc; border-radius: 50%; color: #4a5568;">
+                <i class="bi bi-person-bounding-box"></i>
+            </div>
+
+            <h2 id="resultadoTitulo" style="margin-top: 20px; font-size: 1.25rem; color: #2d3748;">
+                Esperando rostro...
+            </h2>
+
+            <p id="resultadoTexto" style="color: #718096; font-size: 0.85rem; margin-top: 8px;">
+                El sistema mostrará aquí el usuario identificado en tiempo real.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let mediaStream = null;
+
+function activarCamara() {
+    const video = document.getElementById("camera");
+    const placeholder = document.getElementById("cameraPlaceholder");
+    const btnApagar = document.getElementById("btnApagar");
+    const aiStatus = document.getElementById("aiStatus");
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            mediaStream = stream;
+            video.srcObject = stream;
+            placeholder.style.display = "none";
+            btnApagar.style.display = "inline-flex";
+            aiStatus.innerText = "IA ACTIVA";
+            aiStatus.style.color = "#38a169";
+        })
+        .catch(function(error) {
+            alert("No se pudo acceder a la cámara. Revisa los permisos de tu navegador.");
+            console.error(error);
+        });
+}
+
+function apagarCamara() {
+    if (mediaStream) {
+        let tracks = mediaStream.getTracks();
+        tracks.forEach(track => track.stop());
+        mediaStream = null;
+    }
+
+    const video = document.getElementById("camera");
+    const placeholder = document.getElementById("cameraPlaceholder");
+    const btnApagar = document.getElementById("btnApagar");
+    const aiStatus = document.getElementById("aiStatus");
+
+    video.srcObject = null;
+    placeholder.style.display = "block";
+    btnApagar.style.display = "none";
+    aiStatus.innerText = "INACTIVA";
+    aiStatus.style.color = "#718096";
+}
+</script>
+{% endblock %}
