@@ -62,7 +62,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'templates',
+            BASE_DIR / 'templates',  # Directorio principal de plantillas
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -90,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sistema_facial_bcp',
         'USER': 'postgres',
-        'PASSWORD': 'barca10',
+        'PASSWORD': 'Jostin2008',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -152,12 +152,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # ============================================================
-# AUTENTICACIÓN
+# AUTENTICACIÓN Y REDIRECCIONES
 # ============================================================
 
-LOGIN_URL = '/usuarios/login/'
+LOGIN_URL = 'usuarios:login'
 
-LOGIN_REDIRECT_URL = '/'
+# Cambiado para que redirija al Dashboard tras iniciar sesión tradicional
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 LOGOUT_REDIRECT_URL = '/usuarios/login/'
 

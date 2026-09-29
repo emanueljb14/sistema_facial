@@ -1,198 +1,369 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Biométrico | SecureFace</title>
+    
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Face API para detección y cuadro de seguimiento -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
 
-{% block title %}
-Reconocimiento facial | SecureFace
-{% endblock %}
+    <style>
+        :root {
+            --sf-dark-bg: #0b132b;
+            --sf-card-bg: #1c2541;
+            --sf-navy-accent: #3a506b;
+            --sf-gold: #ffc107;
+            --sf-gold-hover: #ffca28;
+            --sf-cyan: #00f5d4;
+            --sf-text-light: #f8fafc;
+            --sf-text-muted: #94a3b8;
+        }
 
-{% block reconocimiento_active %}
-active
-{% endblock %}
+        body {
+            background: linear-gradient(135deg, #0b132b 0%, #1c2541 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--sf-text-light);
+            min-height: 100vh;
+            padding: 30px 0;
+        }
 
-{% block content %}
-<style>
-    /* Estilos específicos para el módulo de reconocimiento */
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 24px;
+        .header-title {
+            color: var(--sf-text-light);
+            font-weight: 800;
+        }
+
+        .btn-gold {
+            background-color: var(--sf-gold);
+            color: #0b132b;
+            font-weight: 700;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-gold:hover {
+            background-color: var(--sf-gold-hover);
+            color: #0b132b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+        }
+
+        .btn-outline-custom {
+            border: 2px solid var(--sf-gold);
+            color: var(--sf-gold);
+            font-weight: 600;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--sf-gold);
+            color: #0b132b;
+        }
+
+        .card-custom {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            background: var(--sf-card-bg);
+            backdrop-filter: blur(10px);
+        }
+
+        /* VISTA PREVIA Y BORDE COLORIDO DE LA CÁMARA */
+        .camera-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 350px;
+            background-color: #000000;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 0 auto;
+            border: 3.5px solid var(--sf-gold);
+            box-shadow: 0 0 25px rgba(255, 193, 7, 0.4), inset 0 0 15px rgba(0, 245, 212, 0.2);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .camera-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .camera-wrapper canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transform: scaleX(-1);
+        }
+
+        .form-control-custom {
+            background-color: rgba(11, 19, 43, 0.6);
+            border: 1px solid var(--sf-navy-accent);
+            color: #ffffff;
+            border-radius: 10px;
+        }
+
+        .form-control-custom:focus {
+            background-color: rgba(11, 19, 43, 0.9);
+            border-color: var(--sf-gold);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+        }
+
+        .form-control-custom::placeholder {
+            color: var(--sf-text-muted);
+        }
+
+        .instruction-badge {
+            background: rgba(58, 80, 107, 0.3);
+            border-left: 4px solid var(--sf-gold);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .info-footer {
+            background: rgba(11, 19, 43, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="header-title mb-1">
+                <i class="bi bi-person-bounding-box text-warning me-2"></i>Registro de Rostro Biométrico
+            </h3>
+            <p class="text-muted mb-0" style="color: var(--sf-text-muted) !important;">Asocie un perfil facial al DNI o usuario para habilitar el acceso al sistema.</p>
+        </div>
+        <a href="/dashboard/" class="btn btn-outline-custom px-3 py-2 rounded-3">
+            <i class="bi bi-arrow-left me-1"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- COLUMNA IZQUIERDA: CÁMARA Y CAPTURA -->
+        <div class="col-lg-7">
+            <div class="card card-custom p-4">
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="identifier" class="form-label fw-bold text-light">DNI o Usuario del Trabajador</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-warning"><i class="bi bi-card-heading fs-5"></i></span>
+                            <input type="text" class="form-control form-control-custom border-start-0 ps-2" id="identifier" placeholder="Ingrese el DNI o usuario registrado" required>
+                        </div>
+                    </div>
+
+                    <!-- VISTA PREVIA CÁMARA CON BORDE COLORIDO -->
+                    <div class="camera-wrapper mb-3" id="cameraBox">
+                        <video id="video" autoplay muted playsinline></video>
+                        <canvas id="overlay"></canvas>
+                    </div>
+
+                    <!-- ESTADO / ALERTAS -->
+                    <div id="alertBox" class="alert d-none text-center fw-semibold py-2 mb-3" role="alert"></div>
+
+                    <!-- BOTÓN DE ACCIÓN -->
+                    <div class="text-center">
+                        <button type="button" class="btn btn-gold w-100 py-2.5 fs-6" id="btnCapture">
+                            <i class="bi bi-camera-fill me-2"></i>Capturar y Guardar Rostro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: INSTRUCCIONES -->
+        <div class="col-lg-5">
+            <div class="card card-custom p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h5 class="fw-bold mb-3 text-light">
+                        <i class="bi bi-info-circle-fill text-warning me-2"></i>Instrucciones de Registro
+                    </h5>
+                    
+                    <div class="instruction-badge mb-4">
+                        <small class="text-light d-block"><strong>Detección activa:</strong> La IA encerrará su rostro en un marco turquesa/verde dinámico al posicionarse adecuadamente.</small>
+                    </div>
+
+                    <ul class="ps-3 mb-4" style="color: var(--sf-text-muted); font-size: 0.9rem;">
+                        <li class="mb-2">Asegúrese de ingresar el <strong>DNI o Usuario exacto</strong> previamente creado en la base de datos.</li>
+                        <li class="mb-2">Posiciónese en un área iluminada evitando sombras marcadas en la cara.</li>
+                        <li class="mb-2">Retire lentes oscuros, gorras o accesorios que cubran la faz.</li>
+                        <li class="mb-2">Mire fijamente a la cámara y haga clic en <strong>Capturar y Guardar Rostro</strong>.</li>
+                    </ul>
+                </div>
+
+                <div class="p-3 info-footer d-flex align-items-center">
+                    <i class="bi bi-shield-lock-fill fs-2 text-warning me-3"></i>
+                    <div>
+                        <strong class="d-block text-light small">Seguridad Biométrica SecureFace</strong>
+                        <span style="color: var(--sf-text-muted); font-size: 0.8rem;">Los datos de imagen son procesados y almacenados de forma segura en el servidor.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let video = document.getElementById('video');
+let overlay = document.getElementById('overlay');
+let btnCapture = document.getElementById('btnCapture');
+let alertBox = document.getElementById('alertBox');
+let isModelLoaded = false;
+
+// Cargar modelos IA para el recuadro dinámico
+async function loadModels() {
+    showAlert('Iniciando sistema biométrico y cámara...', 'info');
+    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    isModelLoaded = true;
+    hideAlert();
+    initCamera();
+}
+
+// Iniciar WebCam
+async function initCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+        video.srcObject = stream;
+
+        video.onloadedmetadata = () => {
+            video.play();
+            startTracking();
+        };
+    } catch (err) {
+        showAlert('Error: Permiso de cámara denegado o dispositivo ocupado.', 'danger');
+    }
+}
+
+// Dibujar recuadro de seguimiento dinámico
+function startTracking() {
+    const displaySize = { width: video.clientWidth || 500, height: video.clientHeight || 350 };
+    faceapi.matchDimensions(overlay, displaySize);
+
+    setInterval(async () => {
+        if (!isModelLoaded) return;
+
+        const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.4 }));
+        
+        const ctx = overlay.getContext('2d');
+        ctx.clearRect(0, 0, overlay.width, overlay.height);
+
+        if (detections) {
+            const resizedDetections = faceapi.resizeResults(detections, displaySize);
+            const { x, y, width, height } = resizedDetections.box;
+
+            // Recuadro Turquesa con esquinas amarillas
+            ctx.strokeStyle = '#00f5d4';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, width, height);
+
+            ctx.fillStyle = '#ffc107';
+            ctx.fillRect(x - 2, y - 2, 8, 8);
+            ctx.fillRect(x + width - 6, y - 2, 8, 8);
+            ctx.fillRect(x - 2, y + height - 6, 8, 8);
+            ctx.fillRect(x + width - 6, y + height - 6, 8, 8);
+        }
+    }, 100);
+}
+
+// Enviar captura a Django
+btnCapture.addEventListener('click', async () => {
+    let identifier = document.getElementById('identifier').value.trim();
+    if (!identifier) {
+        showAlert('Por favor ingrese un DNI o usuario válido.', 'warning');
+        return;
     }
 
-    @media (max-width: 992px) {
-        .dashboard-grid {
-            grid-template-columns: 1fr;
+    const captureCanvas = document.createElement('canvas');
+    captureCanvas.width = video.videoWidth || 640;
+    captureCanvas.height = video.videoHeight || 480;
+    const ctx = captureCanvas.getContext('2d');
+    
+    // Espejo para guardar la imagen derecha
+    ctx.translate(captureCanvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+
+    const imageData = captureCanvas.toDataURL('image/jpeg');
+
+    btnCapture.disabled = true;
+    showAlert('Analizando y registrando coordenadas faciales...', 'info');
+
+    // Intentar con URLs alternativas si es necesario
+    const targetUrl = "{% url 'reconocimiento:register_face' %}";
+
+    try {
+        const response = await fetch(targetUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                username: identifier,  // Coincide con identifier = data.get('username') en views.py
+                image: imageData
+            })
+        });
+
+        const data = await response.json();
+        btnCapture.disabled = false;
+
+        if (response.ok && data.status === 'success') {
+            showAlert(data.message, 'success');
+            document.getElementById('identifier').value = '';
+        } else {
+            showAlert(data.message || 'El usuario no existe o no se detectó un rostro claro.', 'danger');
+        }
+    } catch (err) {
+        btnCapture.disabled = false;
+        showAlert('Error en la comunicación con el servidor. Revisa si el DNI existe en el sistema.', 'danger');
+        console.error(err);
+    }
+});
+
+function showAlert(message, type) {
+    alertBox.className = `alert alert-${type} text-center fw-semibold py-2 mb-3 d-block`;
+    alertBox.innerText = message;
+}
+
+function hideAlert() {
+    alertBox.className = 'alert d-none';
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
         }
     }
-
-    .camera-box {
-        position: relative;
-        width: 100%;
-        height: 400px;
-        background-color: #1a202c;
-        border-radius: 8px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .camera-box video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    .camera-placeholder {
-        position: absolute;
-        text-align: center;
-        color: #a0aec0;
-        z-index: 2;
-    }
-
-    .camera-placeholder i {
-        font-size: 48px;
-        margin-bottom: 10px;
-    }
-
-    .camera-placeholder h2 {
-        font-size: 1.25rem;
-        color: #e2e8f0;
-        margin: 0 0 5px 0;
-    }
-
-    .camera-placeholder p {
-        font-size: 0.85rem;
-        margin: 0;
-    }
-
-    .controls-container {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
-
-    .btn-danger-custom {
-        background-color: #e53e3e;
-        color: #ffffff;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .btn-danger-custom:hover {
-        background-color: #c53030;
-    }
-</style>
-
-<div class="page-header">
-    <div>
-        <h1>Reconocimiento facial</h1>
-        <p>Identificación automática mediante inteligencia artificial.</p>
-    </div>
-</div>
-
-<div class="dashboard-grid">
-    <!-- CÁMARA -->
-    <div class="panel">
-        <div class="panel-header">
-            <h3>Cámara de reconocimiento</h3>
-            <span id="aiStatus" style="color: #718096; font-weight: 600; font-size: 0.8rem;">INACTIVA</span>
-        </div>
-
-        <div class="camera-box">
-            <video id="camera" autoplay muted playsinline></video>
-            <div id="cameraPlaceholder" class="camera-placeholder">
-                <i class="bi bi-camera-video-off"></i>
-                <h2>Cámara desactivada</h2>
-                <p>Activa la cámara para comenzar el escaneo.</p>
-            </div>
-        </div>
-
-        <div class="controls-container">
-            <button class="btn-primary" onclick="activarCamara()">
-                <i class="bi bi-camera-fill"></i> Activar cámara
-            </button>
-            <button class="btn-danger-custom" onclick="apagarCamara()" id="btnApagar" style="display: none;">
-                <i class="bi bi-stop-circle-fill"></i> Apagar cámara
-            </button>
-        </div>
-    </div>
-
-    <!-- RESULTADO -->
-    <div class="panel">
-        <div class="panel-header">
-            <h3>Resultado</h3>
-        </div>
-
-        <div style="text-align: center; padding: 50px 10px;">
-            <div class="stat-icon" style="width: 80px; height: 80px; margin: auto; font-size: 35px; display: flex; align-items: center; justify-content: center; background-color: #f7fafc; border-radius: 50%; color: #4a5568;">
-                <i class="bi bi-person-bounding-box"></i>
-            </div>
-
-            <h2 id="resultadoTitulo" style="margin-top: 20px; font-size: 1.25rem; color: #2d3748;">
-                Esperando rostro...
-            </h2>
-
-            <p id="resultadoTexto" style="color: #718096; font-size: 0.85rem; margin-top: 8px;">
-                El sistema mostrará aquí el usuario identificado en tiempo real.
-            </p>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-let mediaStream = null;
-
-function activarCamara() {
-    const video = document.getElementById("camera");
-    const placeholder = document.getElementById("cameraPlaceholder");
-    const btnApagar = document.getElementById("btnApagar");
-    const aiStatus = document.getElementById("aiStatus");
-
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function(stream) {
-            mediaStream = stream;
-            video.srcObject = stream;
-            placeholder.style.display = "none";
-            btnApagar.style.display = "inline-flex";
-            aiStatus.innerText = "IA ACTIVA";
-            aiStatus.style.color = "#38a169";
-        })
-        .catch(function(error) {
-            alert("No se pudo acceder a la cámara. Revisa los permisos de tu navegador.");
-            console.error(error);
-        });
+    return cookieValue;
 }
 
-function apagarCamara() {
-    if (mediaStream) {
-        let tracks = mediaStream.getTracks();
-        tracks.forEach(track => track.stop());
-        mediaStream = null;
-    }
-
-    const video = document.getElementById("camera");
-    const placeholder = document.getElementById("cameraPlaceholder");
-    const btnApagar = document.getElementById("btnApagar");
-    const aiStatus = document.getElementById("aiStatus");
-
-    video.srcObject = null;
-    placeholder.style.display = "block";
-    btnApagar.style.display = "none";
-    aiStatus.innerText = "INACTIVA";
-    aiStatus.style.color = "#718096";
-}
+// Iniciar al cargar
+loadModels();
 </script>
-{% endblock %}
+
+</body>
+</html>

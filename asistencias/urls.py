@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'asistencias'
+
 urlpatterns = [
-    # Aquí irán las rutas para registrar y ver asistencias, por ejemplo:
-    # path('registrar/', views.registrar_asistencia, name='registrar_asistencia'),
+    path('', views.index, name='index'),
 ]
