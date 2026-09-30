@@ -88,10 +88,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sistema_facial_bcp',
-        'USER': 'postgres',
-        'PASSWORD': 'Jostin2008',
-        'HOST': 'localhost',
+        'NAME': 'postgres',
+        'USER': 'postgres.zbtqticpymwerrvemfks',
+        'PASSWORD': '4a1uDVcN6NpP6kZD',
+        'HOST': 'aws-0-us-east-2.pooler.supabase.com',
         'PORT': '5432',
     }
 }
