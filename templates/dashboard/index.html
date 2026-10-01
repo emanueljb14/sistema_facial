@@ -86,10 +86,6 @@ Dashboard | SecureFace
         background-color: #e8f5e9;
         color: #2e7d32;
     }
-    .stat-change:contains('0') { /* Fallback visual para 0 */
-        background-color: #f8f9fa;
-        color: #6c757d;
-    }
     .stat-card h3 {
         font-size: 1.8rem;
         margin: 0 0 4px 0;
@@ -213,7 +209,6 @@ Dashboard | SecureFace
         font-weight: 600;
     }
 
-    /* Responsive */
     @media (max-width: 992px) {
         .dashboard-grid {
             grid-template-columns: 1fr;
@@ -232,55 +227,43 @@ Dashboard | SecureFace
         <h1>Dashboard</h1>
         <p>Bienvenido al sistema de control y reconocimiento facial.</p>
     </div>
-    <a href="{% url 'reconocimiento' %}" class="btn-accent">
+    <a href="{% url 'dashboard:reconocimiento' %}" class="btn-accent">
         <i class="bi bi-camera-fill"></i> Iniciar reconocimiento
     </a>
 </div>
 
 <!-- ESTADÍSTICAS -->
 <div class="stats-grid">
-    <!-- USUARIOS -->
     <div class="stat-card">
         <div class="stat-top">
-            <div class="stat-icon">
-                <i class="bi bi-people-fill"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
             <span class="stat-change">+12%</span>
         </div>
         <h3>128</h3>
         <p>Usuarios registrados</p>
     </div>
 
-    <!-- ASISTENCIAS -->
     <div class="stat-card">
         <div class="stat-top">
-            <div class="stat-icon">
-                <i class="bi bi-person-check-fill"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-person-check-fill"></i></div>
             <span class="stat-change">+8%</span>
         </div>
         <h3>96</h3>
         <p>Asistencias hoy</p>
     </div>
 
-    <!-- RECONOCIMIENTOS -->
     <div class="stat-card">
         <div class="stat-top">
-            <div class="stat-icon">
-                <i class="bi bi-person-bounding-box"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-person-bounding-box"></i></div>
             <span class="stat-change">+15%</span>
         </div>
         <h3>342</h3>
         <p>Reconocimientos</p>
     </div>
 
-    <!-- INCIDENCIAS -->
     <div class="stat-card">
         <div class="stat-top">
-            <div class="stat-icon">
-                <i class="bi bi-shield-check"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-shield-check"></i></div>
             <span class="stat-change" style="background-color: #f8f9fa; color: #6c757d;">0</span>
         </div>
         <h3>0</h3>
@@ -294,7 +277,7 @@ Dashboard | SecureFace
     <div class="panel">
         <div class="panel-header">
             <h3>Actividad reciente</h3>
-            <a href="{% url 'asistencias' %}" class="btn-primary">Ver todo</a>
+            <a href="{% url 'dashboard:asistencias' %}" class="btn-primary">Ver todo</a>
         </div>
 
         <div class="activity-item">
@@ -323,15 +306,6 @@ Dashboard | SecureFace
             </div>
             <span class="activity-time">Hace 32 min</span>
         </div>
-
-        <div class="activity-item">
-            <div class="activity-icon"><i class="bi bi-camera-fill"></i></div>
-            <div class="activity-info">
-                <strong>Sistema de reconocimiento</strong>
-                <span>Cámara activada correctamente</span>
-            </div>
-            <span class="activity-time">Hace 1 h</span>
-        </div>
     </div>
 
     <!-- ACCIONES RÁPIDAS -->
@@ -341,22 +315,22 @@ Dashboard | SecureFace
         </div>
 
         <div class="quick-actions">
-            <a href="{% url 'reconocimiento' %}" class="quick-action">
+            <a href="{% url 'dashboard:reconocimiento' %}" class="quick-action">
                 <i class="bi bi-camera-fill"></i>
                 <strong>Reconocimiento</strong>
             </a>
 
-            <a href="{% url 'usuarios' %}" class="quick-action">
+            <a href="{% url 'dashboard:usuarios' %}" class="quick-action">
                 <i class="bi bi-person-plus-fill"></i>
                 <strong>Usuarios</strong>
             </a>
 
-            <a href="{% url 'asistencias' %}" class="quick-action">
+            <a href="{% url 'dashboard:asistencias' %}" class="quick-action">
                 <i class="bi bi-clock-history"></i>
                 <strong>Asistencias</strong>
             </a>
 
-            <a href="{% url 'reportes' %}" class="quick-action">
+            <a href="{% url 'dashboard:reportes' %}" class="quick-action">
                 <i class="bi bi-bar-chart-fill"></i>
                 <strong>Reportes</strong>
             </a>

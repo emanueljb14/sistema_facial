@@ -4,339 +4,271 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>{% block title %}SecureFace{% endblock %}</title>
 
     <!-- Bootstrap Icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    >
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Fuente -->
+    <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+    <!-- CSS Base -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-    <!-- TU CSS -->
-    <link
-        rel="stylesheet"
-        href="{% static 'css/style.css' %}"
-    >
+    <style>
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
 
+        /* Empuja el perfil del usuario al fondo del menú */
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+        }
+
+        .user-dropdown-container {
+            position: relative;
+        }
+
+        /* MENÚ DESPLEGABLE LATERAL: Se posiciona arriba (bottom: 110%) o a la derecha según el espacio */
+        .user-dropdown-menu {
+            display: none;
+            position: absolute;
+            bottom: 115%; /* Se despliega hacia arriba del perfil */
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            border: 1px solid #eaeaea;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .header-profile-container {
+            position: relative;
+        }
+
+        .header-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            width: 180px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border: 1px solid #eaeaea;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: #d9534f;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #c9302c;
+        }
+
+        .dropdown-show {
+            display: block !important;
+        }
+    </style>
 </head>
-
 
 <body>
 
 <div class="app">
 
-
-    <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
-
+    <!-- SIDEBAR -->
     <aside class="sidebar">
 
-
         <!-- LOGO -->
-
         <div class="brand">
-
             <div class="brand-icon">
                 <i class="bi bi-shield-lock-fill"></i>
             </div>
-
             <div>
-
                 <h2>SecureFace</h2>
-
-                <span>
-                    Security System
-                </span>
-
+                <span>Security System</span>
             </div>
-
         </div>
 
-
-        <!-- =================================================
-             MENÚ PRINCIPAL
-        ================================================== -->
-
-        <div class="menu-title">
-            MENÚ PRINCIPAL
-        </div>
-
+        <!-- MENÚ PRINCIPAL -->
+        <div class="menu-title">MENÚ PRINCIPAL</div>
 
         <nav class="navigation">
-
-
-            <!-- DASHBOARD -->
-
-            <a
-                href="{% url 'dashboard' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-            >
-
+            <a href="{% url 'dashboard:dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                 <i class="bi bi-grid-fill"></i>
-
-                <span>
-                    Dashboard
-                </span>
-
+                <span>Dashboard</span>
             </a>
 
-
-            <!-- USUARIOS -->
-
-            <a
-                href="{% url 'usuarios' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'usuarios' %}active{% endif %}"
-            >
-
+            <a href="{% url 'dashboard:usuarios' %}" class="nav-item {% if request.resolver_match.url_name == 'usuarios' %}active{% endif %}">
                 <i class="bi bi-people-fill"></i>
-
-                <span>
-                    Usuarios
-                </span>
-
+                <span>Usuarios</span>
             </a>
 
-
-            <!-- RECONOCIMIENTO -->
-
-            <a
-                href="{% url 'reconocimiento' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'reconocimiento' %}active{% endif %}"
-            >
-
+            <a href="{% url 'dashboard:reconocimiento' %}" class="nav-item {% if request.resolver_match.url_name == 'reconocimiento' %}active{% endif %}">
                 <i class="bi bi-person-bounding-box"></i>
-
-                <span>
-                    Reconocimiento
-                </span>
-
-                <span class="nav-badge">
-                    IA
-                </span>
-
+                <span>Reconocimiento</span>
+                <span class="nav-badge">IA</span>
             </a>
 
-
-            <!-- ASISTENCIAS -->
-
-            <a
-                href="{% url 'asistencias' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'asistencias' %}active{% endif %}"
-            >
-
+            <a href="{% url 'dashboard:asistencias' %}" class="nav-item {% if request.resolver_match.url_name == 'asistencias' %}active{% endif %}">
                 <i class="bi bi-clock-history"></i>
-
-                <span>
-                    Asistencias
-                </span>
-
+                <span>Asistencias</span>
             </a>
 
-
-            <!-- REPORTES -->
-
-            <a
-                href="{% url 'reportes' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'reportes' %}active{% endif %}"
-            >
-
+            <a href="{% url 'dashboard:reportes' %}" class="nav-item {% if request.resolver_match.url_name == 'reportes' %}active{% endif %}">
                 <i class="bi bi-bar-chart-line-fill"></i>
-
-                <span>
-                    Reportes
-                </span>
-
+                <span>Reportes</span>
             </a>
-
         </nav>
 
+        <!-- SECCIÓN INFERIOR DEL SIDEBAR (PERFIL CON DESPLEGABLE) -->
+        <div class="sidebar-footer">
+            <div class="menu-title">SISTEMA</div>
 
-        <!-- =================================================
-             SISTEMA
-        ================================================== -->
+            <div class="user-dropdown-container">
+                <!-- MENÚ EMERGENTE QUE APARECE ARRIBA DE LOS 3 PUNTOS -->
+                <div id="sidebar-logout-menu" class="user-dropdown-menu">
+                    <a href="{% url 'usuarios:logout' %}" class="dropdown-item">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar sesión</span>
+                    </a>
+                </div>
 
-        <div class="menu-title">
-            SISTEMA
-        </div>
-
-
-        <nav class="navigation">
-
-            <a href="#" class="nav-item">
-
-                <i class="bi bi-gear-fill"></i>
-
-                <span>
-                    Configuración
-                </span>
-
-            </a>
-
-        </nav>
-
-
-        <!-- =================================================
-             USUARIO
-        ================================================== -->
-
-        <div class="sidebar-user">
-
-            <div class="avatar">
-                OP
+                <!-- BOTÓN PERFIL / TRES PUNTOS -->
+                <div class="sidebar-user" id="sidebar-user-btn" style="cursor: pointer;">
+                    <div class="avatar">OP</div>
+                    <div class="user-text">
+                        <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                        <span>Administrador</span>
+                    </div>
+                    <i class="bi bi-three-dots"></i>
+                </div>
             </div>
-
-            <div class="user-text">
-
-                <strong>
-                    Omar Perez
-                </strong>
-
-                <span>
-                    Administrador
-                </span>
-
-            </div>
-
-            <i class="bi bi-three-dots"></i>
-
         </div>
-
 
     </aside>
 
-
-
-    <!-- =====================================================
-         CONTENIDO PRINCIPAL
-    ====================================================== -->
-
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="main">
 
-
         <!-- HEADER -->
-
         <header class="header">
 
-
             <button class="mobile-button">
-
                 <i class="bi bi-list"></i>
-
             </button>
 
-
             <!-- BUSCADOR -->
-
             <div class="header-search">
-
                 <i class="bi bi-search"></i>
-
-                <input
-                    type="text"
-                    placeholder="Buscar en el sistema..."
-                >
-
+                <input type="text" placeholder="Buscar en el sistema...">
             </div>
-
 
             <!-- ACCIONES -->
-
             <div class="header-actions">
 
-
                 <button class="header-icon">
-
                     <i class="bi bi-question-circle"></i>
-
                 </button>
-
 
                 <button class="header-icon notification">
-
                     <i class="bi bi-bell"></i>
-
-                    <span>
-                        3
-                    </span>
-
+                    <span>3</span>
                 </button>
 
-
-                <!-- PERFIL -->
-
-                <div class="header-profile">
-
-                    <div class="avatar small">
-                        OP
+                <!-- PERFIL SUPERIOR CON CERRAR SESIÓN -->
+                <div class="header-profile-container">
+                    <div class="header-profile" id="header-user-btn" style="cursor: pointer;">
+                        <div class="avatar small">OP</div>
+                        <div>
+                            <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                            <span>Administrador</span>
+                        </div>
+                        <i class="bi bi-chevron-down"></i>
                     </div>
 
-                    <div>
-
-                        <strong>
-                            Omar Perez
-                        </strong>
-
-                        <span>
-                            Administrador
-                        </span>
-
+                    <div id="header-logout-menu" class="header-dropdown-menu">
+                        <a href="{% url 'usuarios:logout' %}" class="dropdown-item">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar sesión</span>
+                        </a>
                     </div>
-
-                    <i class="bi bi-chevron-down"></i>
-
                 </div>
 
-
             </div>
-
 
         </header>
 
-
-
-        <!-- =================================================
-             CONTENIDO DE CADA PÁGINA
-        ================================================== -->
-
+        <!-- CONTENIDO DE CADA PÁGINA -->
         <section class="page-content">
-
             {% block content %}
-
             {% endblock %}
-
         </section>
-
 
     </main>
 
-
 </div>
 
-
 <!-- JAVASCRIPT -->
-
 <script src="{% static 'js/main.js' %}"></script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarBtn = document.getElementById('sidebar-user-btn');
+        const sidebarMenu = document.getElementById('sidebar-logout-menu');
+
+        const headerBtn = document.getElementById('header-user-btn');
+        const headerMenu = document.getElementById('header-logout-menu');
+
+        // Toggle del menú del sidebar al hacer clic en los tres puntos / usuario
+        if (sidebarBtn && sidebarMenu) {
+            sidebarBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (headerMenu) headerMenu.classList.remove('dropdown-show');
+                sidebarMenu.classList.toggle('dropdown-show');
+            });
+        }
+
+        // Toggle del menú del header superior
+        if (headerBtn && headerMenu) {
+            headerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (sidebarMenu) sidebarMenu.classList.remove('dropdown-show');
+                headerMenu.classList.toggle('dropdown-show');
+            });
+        }
+
+        // Cierra los desplegables al hacer clic fuera de ellos
+        document.addEventListener('click', function() {
+            if (sidebarMenu) sidebarMenu.classList.remove('dropdown-show');
+            if (headerMenu) headerMenu.classList.remove('dropdown-show');
+        });
+    });
+</script>
 
 {% block scripts %}
-
 {% endblock %}
 
-
 </body>
-
 </html>

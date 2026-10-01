@@ -1,7 +1,5 @@
-
 from django.db import models
 from django.contrib.auth.models import User
-
 
 class Trabajador(models.Model):
 
@@ -29,6 +27,8 @@ class Trabajador(models.Model):
         choices=ROLES,
         default='EMPLEADO'
     )
+    # ALMACENA LA IMAGEN BASE64 DIRECTAMENTE EN POSTGRESQL (Sin usar la carpeta media)
+    foto = models.TextField(null=True, blank=True)
     activo = models.BooleanField(default=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
